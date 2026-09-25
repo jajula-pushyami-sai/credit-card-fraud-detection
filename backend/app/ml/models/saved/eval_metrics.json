@@ -1,0 +1,31 @@
+{
+  "evaluation_type": "validation",
+  "model": "ET + MLP + XGBoost Meta-Ensemble",
+  "dataset": "creditcard.csv",
+  "split": "validation (20% stratify)",
+  "dataset_summary": {
+    "total_transactions": 284807,
+    "fraud_transactions": 492,
+    "legitimate_transactions": 284315,
+    "fraud_rate": 0.0017274856130636152
+  },
+  "metrics": {
+    "accuracy": 0.998771110564938,
+    "precision": 1.0,
+    "recall": 0.2857142857142857,
+    "f1": 0.4444444444444445,
+    "roc_auc": 0.9480116540144478,
+    "pr_auc": 0.7534907153676839,
+    "tp": 28,
+    "tn": 56864,
+    "fp": 0,
+    "fn": 70
+  },
+  "model_info": {
+    "version": "v1.0.0-ensemble",
+    "features": 30,
+    "base_models": "Extra Trees + MLP",
+    "meta_learner": "XGBoost",
+    "explainability": "SHAP"
+  }
+}

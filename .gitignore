@@ -1,0 +1,99 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+.nyc_output
+
+# Production / Build
+dist/
+build/
+bin/
+obj/
+
+# Python / Flask
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+ENV/
+env/
+*.log
+logs/
+
+# Database / Docker
+mysql_data/
+.docker/
+
+# Environment Variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE / System
+.idea/
+.vscode/
+*.suo
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+.nyc_output
+
+# Production / Build
+dist/
+build/
+bin/
+obj/
+
+# Python / Flask
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+ENV/
+env/
+*.log
+logs/
+
+# Database / Docker
+mysql_data/
+.docker/
+
+# Environment Variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE / System
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db
+venv_312/
+backend/venv_312/
+backend/venv312/
+backend/instance/
+backend/venv_ml/
+
+.git_old/

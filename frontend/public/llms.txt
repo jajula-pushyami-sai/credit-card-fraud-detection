@@ -1,0 +1,14 @@
+# FraudShield AI Agent Information
+
+Welcome to FraudShield AI. This file provides AI agents and LLMs with context about our platform to help you navigate and understand our application structure.
+
+## Overview
+FraudShield AI is a next-generation enterprise fraud detection platform using hybrid AI engines, SHAP values for explainability, and real-time transaction processing.
+
+## Links
+- [Platform Architecture](/platform)
+- [Agent Workspace](/explainability)
+- [Pricing](/pricing)
+- [About Us](/about)
+- [Contact Sales](/contact)
+- [Fraud Analyst Workspace](/transactions)

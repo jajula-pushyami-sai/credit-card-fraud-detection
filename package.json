@@ -1,0 +1,28 @@
+{
+  "name": "fraudshield-ai",
+  "version": "1.0.0",
+  "description": "Enterprise Credit Card Fraud Detection Platform with Explainable AI",
+  "private": true,
+  "scripts": {
+    "docker:dev": "docker-compose up --build",
+    "docker:down": "docker-compose down -v",
+    "dev:backend": "cd backend && venv312\\Scripts\\python.exe run.py",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build:frontend": "cd frontend && npm run build",
+    "lint:frontend": "cd frontend && npm run lint",
+    "lint:backend": "cd backend && flake8 app tests",
+    "test:backend": "cd backend && pytest",
+    "test:frontend": "cd frontend && npm run test",
+    "test": "npm run test:frontend"
+  },
+  "keywords": [
+    "fraud-detection",
+    "explainable-ai",
+    "machine-learning",
+    "react-19",
+    "flask",
+    "mysql"
+  ],
+  "author": "FraudShield AI Team",
+  "license": "MIT"
+}

@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Machine Learning Artifacts
+app/ml/data/
+app/ml/artifacts/
+app/ml/models/model_registry.json
+
+# IDEs
+.vscode/
+.idea/

@@ -1,0 +1,99 @@
+name: FraudShield AI CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  backend-test:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: fraudshield_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+      redis:
+        image: redis:7.2-alpine
+        ports:
+          - 6379:6379
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: 'pip'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r backend/requirements.txt
+        pip install pytest pytest-cov flake8 vulture
+        
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 backend/ --count --select=E9,F63,F7,F82 --show-source --statistics
+
+    - name: Static Dead-Code Analysis (Vulture)
+      run: |
+        # Flag any dead code (unused imports, functions, classes, or modules)
+        # Note: vulture might need a whitelist for some dynamic framework features, 
+        # but here we run it as a warning or strict check for major orphans.
+        vulture backend/app --min-confidence 100 || echo "Vulture found potential dead code!"
+        
+    - name: Run Pytest & Schema Validation
+      env:
+        DATABASE_URL: mysql+pymysql://root:root@127.0.0.1:3306/fraudshield_test
+        REDIS_URL: redis://127.0.0.1:6379/0
+        JWT_SECRET_KEY: test_secret_key
+      run: |
+        cd backend
+        
+        # Verify that Alembic migrations are perfectly in sync with SQLAlchemy models
+        # If models have changed but migrations were not generated, this will fail the CI.
+        flask db check
+        
+        pytest tests/ --cov=app --cov-report=xml
+
+  frontend-build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Node.js 20
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+        
+    - name: Install dependencies
+      run: |
+        cd frontend
+        npm ci
+        
+    - name: TypeScript Compile & Vite Build
+      run: |
+        cd frontend
+        npm run build
+
+  docker-integration:
+    needs: [backend-test, frontend-build]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Verify Docker Compose Build
+      run: |
+        docker-compose build

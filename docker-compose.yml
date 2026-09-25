@@ -1,0 +1,106 @@
+version: '3.8'
+
+services:
+  # -----------------------------------------
+  # Frontend React App (Production Build)
+  # -----------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - fraudshield_net
+
+  # -----------------------------------------
+  # Backend Flask API (Gunicorn)
+  # -----------------------------------------
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - fraudshield_batch_data:/app/batch_data
+    environment:
+      - FLASK_ENV=production
+      - DATABASE_URL=mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql_db:3306/${MYSQL_DATABASE}
+      - REDIS_URL=redis://redis_cache:6379/0
+      - SECRET_KEY=${SECRET_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+    depends_on:
+      mysql_db:
+        condition: service_healthy
+      redis_cache:
+        condition: service_healthy
+    networks:
+      - fraudshield_net
+
+  # -----------------------------------------
+  # Celery Background Worker
+  # -----------------------------------------
+  celery_worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: celery -A celery_worker.celery worker --loglevel=info
+    volumes:
+      - fraudshield_batch_data:/app/batch_data
+    environment:
+      - DATABASE_URL=mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql_db:3306/${MYSQL_DATABASE}
+      - REDIS_URL=redis://redis_cache:6379/0
+      - SECRET_KEY=${SECRET_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+    depends_on:
+      redis_cache:
+        condition: service_healthy
+      mysql_db:
+        condition: service_healthy
+    networks:
+      - fraudshield_net
+
+  # -----------------------------------------
+  # MySQL Database
+  # -----------------------------------------
+  mysql_db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - fraudshield_net
+
+  # -----------------------------------------
+  # Redis Broker & Cache
+  # -----------------------------------------
+  redis_cache:
+    image: redis:7.2-alpine
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - fraudshield_net
+
+volumes:
+  mysql_data:
+  redis_data:
+  fraudshield_batch_data:
+
+networks:
+  fraudshield_net:
+    driver: bridge
