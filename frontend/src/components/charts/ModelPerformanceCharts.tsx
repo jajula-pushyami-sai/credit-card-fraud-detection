@@ -310,3 +310,85 @@ export const FeatureImportancesChart: React.FC = () => {
     </div>
   );
 };
+
+export const ProbabilityDistributionChart: React.FC = () => {
+  const [viewMode, setViewMode] = useState<'image' | 'details'>('image');
+
+  return (
+    <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+        <div>
+          <h3 className="text-base font-bold text-slate-900">
+            Predicted Probability Distribution (Log Scale)
+          </h3>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Logarithmic probability density separation between Legitimate (Class 0) and Fraudulent (Class 1) transactions
+          </p>
+        </div>
+
+        {/* View Toggle */}
+        <div className="flex bg-slate-100 p-1 rounded-lg self-start sm:self-auto border border-slate-200">
+          <button
+            type="button"
+            onClick={() => setViewMode('image')}
+            className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${
+              viewMode === 'image'
+                ? 'bg-white text-[#0F766E] shadow-sm'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Reference Figure
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode('details')}
+            className={`px-3 py-1 rounded-md text-xs font-bold transition-all ${
+              viewMode === 'details'
+                ? 'bg-white text-[#0F766E] shadow-sm'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Threshold Breakdown
+          </button>
+        </div>
+      </div>
+
+      {viewMode === 'image' ? (
+        <div className="flex flex-col items-center justify-center p-2 bg-slate-50/50 rounded-xl border border-slate-100 overflow-hidden">
+          <img
+            src="/probability_distribution.png"
+            alt="Predicted Probability Distribution (Log Scale)"
+            className="w-full max-w-3xl h-auto rounded-lg shadow-sm border border-slate-200 object-contain"
+          />
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-2">
+          <div className="bg-emerald-50/60 p-4 rounded-xl border border-emerald-200 space-y-1">
+            <span className="text-xs font-bold text-emerald-800 uppercase tracking-wider">Legitimate (Class 0)</span>
+            <p className="text-xl font-bold text-emerald-950 font-mono">Dense Concentration</p>
+            <p className="text-xs text-emerald-700">Concentrated near probability 0.00 – 0.20 with rapid density drop-off across log-scales.</p>
+          </div>
+          <div className="bg-red-50/60 p-4 rounded-xl border border-red-200 space-y-1">
+            <span className="text-xs font-bold text-red-800 uppercase tracking-wider">Fraudulent (Class 1)</span>
+            <p className="text-xl font-bold text-red-950 font-mono">Bimodal Peak</p>
+            <p className="text-xs text-red-700">Broad density coverage across probability ranges with high probability spikes near 1.0.</p>
+          </div>
+          <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-1">
+            <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">Decision Threshold</span>
+            <p className="text-xl font-bold text-[#0F766E] font-mono">0.8256</p>
+            <p className="text-xs text-slate-600">Calibrated cut-off boundary ensuring 0 False Positives on benchmark evaluation sets.</p>
+          </div>
+        </div>
+      )}
+
+      <div className="pt-2 border-t border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs text-slate-500 gap-2">
+        <span>
+          <strong className="text-slate-800">Key Takeaway:</strong> Calibrated threshold at <strong className="text-slate-900 font-mono">0.8256</strong> strictly isolates high-risk fraudulent spikes while preventing false alarms.
+        </span>
+        <span className="font-mono text-[11px] bg-teal-50 text-teal-800 border border-teal-200 px-2 py-0.5 rounded font-bold shrink-0">
+          Calibrated Probability Density
+        </span>
+      </div>
+    </div>
+  );
+};

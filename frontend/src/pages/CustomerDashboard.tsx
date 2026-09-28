@@ -5,7 +5,8 @@ import {
   ConfusionMatrixChart,
   ROCCurveChart,
   PrecisionRecallCurveChart,
-  FeatureImportancesChart
+  FeatureImportancesChart,
+  ProbabilityDistributionChart
 } from '@/components/charts/ModelPerformanceCharts';
 
 export const CustomerDashboard = () => {
@@ -120,6 +121,9 @@ export const CustomerDashboard = () => {
 
             {/* Top 20 LightGBM Feature Importances */}
             <FeatureImportancesChart />
+
+            {/* Predicted Probability Distribution (Log Scale) */}
+            <ProbabilityDistributionChart />
 
             {/* Performance Interpretation Card */}
             <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
